@@ -4,10 +4,13 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 import { getMe, login, register } from './logic/auth.js'
 import { checkAuth } from './extencions/checkAuth.js'
+import { upload } from './extencions/multerConfig.js'
+import { addItem } from './logic/item.js'
 
 const app = express()
 dotenv.config()
 app.use(express.json())
+app.use(cors())
 
 //Constants
 const PORT = process.env.PORT || 5000;
@@ -18,6 +21,7 @@ const DB_PASSWORD = process.env.DB_PASSWORD
 //API
 app.post('/api/auth/register', register)
 app.post('/api/auth/login', login)
+app.post('/api/upload', upload.single(), addItem)
 app.get('/api/auth/me',checkAuth, getMe)
 
 async function start() {
