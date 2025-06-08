@@ -28,7 +28,7 @@ export const register = async (req, res) => {
             password: hash
         })
 
-        const token = jwt.sign({ _id: newUser._id }, process.env.JWT_SECRET, { expiresIn: "30d" })
+        const token = jwt.sign({ _id: newUser._id, _email: newUser.email }, process.env.JWT_SECRET, { expiresIn: "30d" })
         await newUser.save()
 
         return res.status(200).json({ message: "Rejestracja powiodła się.", newUser, token })
@@ -44,11 +44,14 @@ export const login = async (req, res) => {
 
         const user = await User.findOne({ email })
         if (!user) return res.status(400).json({ message: "Użytkownik nie istnieje." })
-
         const passwordCorrect = bcryptjs.compareSync(password, user.password)
         if (!passwordCorrect) return res.status(400).json({ message: "Hasło lub email są nie poprawne." })
-
-        const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: "30d" })
+            let token = null
+        if(email === 'admin@gmail.com') {
+             token = jwt.sign({ _id: user._id, _email: email }, process.env.JWT_SECRET, { expiresIn: "30d" })
+        } else {
+             token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: "30d" })
+        }
 
         return res.status(200).json({ message: "Zostałeś zalogowany.", user, token })
     } catch (err) {
