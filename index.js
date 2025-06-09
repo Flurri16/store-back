@@ -29,7 +29,7 @@ app.get('/api/auth/me',checkAuth, getMe)
 
 app.get('/api/items', getAll)
 app.get('/api/:id', checkAuth, getOne)
-app.delete('/api/delete/:id', checkAuth, deleteItem)
+app.delete('/api/delete/:id', checkAuth, adminOnly, deleteItem)
 app.post('/api/upload', checkAuth, adminOnly, upload.array('images', 5), addItem)
 app.post('/api/create-checkout-session', createCheckoutSession)
 app.use('/api/telegram', tgsent)
