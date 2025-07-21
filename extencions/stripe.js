@@ -24,8 +24,8 @@ export const createCheckoutSession = async (req, res) => {
       payment_method_types: ['card', 'p24', 'blik'],
       line_items,
       mode: 'payment',
-      success_url: 'https://store-front-production-5db9.up.railway.app/success',
-      cancel_url: 'https://store-front-production-5db9.up.railway.app/cancel',
+      success_url: 'https://nimble-yeot-cebd09.netlify.app/success',
+      cancel_url: 'https://nimble-yeot-cebd09.netlify.app/cancel',
     })
 
     res.json({ url: session.url })
