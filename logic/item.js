@@ -1,4 +1,5 @@
 import Item from '../models/Item.js'
+import fs from 'fs/promises';
 export const addItem = async (req, res) => {
     try {
         const {title, description, cost} = req.body
@@ -44,16 +45,28 @@ export const getOne = async (req, res) => {
     }
 }
 export const deleteItem = async (req, res) => {
-    try {
-        const {id} = req.params
-        const item = await Item.findByIdAndDelete(id)
-        if(!item ) return res.status(403).json({message: "Przedmiot nie istnieje."})
-        return res.status(200).json({message: "Przedmiot był usunięty."})
+  try {
+    const { id } = req.params;
+    const item = await Item.findByIdAndDelete(id);
 
-
-    } catch(err) {
-        console.log(err)
-        return res.status(500).json({ message: 'Error to delete item.' });
-
+    if (!item) {
+      return res.status(403).json({ message: "Przedmiot nie istnieje." });
     }
-}
+
+    // Удалить папку, если путь есть
+    if (item.folderPath) {
+      try {
+        await fs.rm(item.folderPath, { recursive: true, force: true });
+        console.log("Folder usunięty:", item.folderPath);
+      } catch (err) {
+        console.error("Błąd przy usuwaniu folderu:", err);
+        // Не прерываем выполнение — это не критическая ошибка
+      }
+    }
+
+    return res.status(200).json({ message: "Przedmiot był usunięty." });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: 'Error to delete item.' });
+  }
+};
